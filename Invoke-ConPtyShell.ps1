@@ -127,7 +127,7 @@ function Invoke-ConPtyShell
     } else {
         # Load and use the compiled assembly
         $compiledAssembly = $compilerResults.CompiledAssembly
-        $type = $compiledAssembly.GetType("MyNamespace.MyExample")
+        $type = $compiledAssembly.GetType("MainClass")
         $instance = [Activator]::CreateInstance($type)
         $instance.ShowMessage()
     }
