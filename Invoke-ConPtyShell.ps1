@@ -116,7 +116,8 @@ function Invoke-ConPtyShell
     $compilerOptions = New-Object System.CodeDom.Compiler.CompilerParameters
     $compilerOptions.GenerateExecutable = $false
     $compilerOptions.GenerateInMemory = $true
-    $compilerOptions.ReferencedAssemblies.Add("[System.Net.Sockets.Socket].Assembly.Location")
+    $loc = [System.Net.Sockets.Socket].Assembly.Location
+    $compilerOptions.ReferencedAssemblies.Add($loc)
 
     $provider = New-Object Microsoft.CSharp.CSharpCodeProvider
     $compilerResults = $provider.CompileAssemblyFromSource($compilerOptions, $Source)
